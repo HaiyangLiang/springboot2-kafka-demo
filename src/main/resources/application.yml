@@ -1,0 +1,63 @@
+server:
+  port: 8621
+  servlet:
+    # 配置统一访问前缀
+    context-path: /kafka-demo
+  tomcat:
+    accesslog:
+      # 打印tomcat日志, 获取nginx代理过的真实ip(ps: 这里需要nginx采用配套配置)
+      pattern: "%{X-Real-IP}i %l %u %t &quot;%r&quot; %s %b %a"
+    #  http对post请求大小不做限制, tomcat对post请求默认为2M, 这里设置为非0表示不做限制
+    max-http-post-size: 1
+
+# spring 集成kafka配置
+spring:
+  kafka:
+    #    生产者
+    producer:
+      #  表示所有broker都确认接收成功
+      acks: all
+      retries: 0
+      #      批处理大小
+      batch-size: 16384
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      #      延迟发送时间
+      linger: 5
+      #  配置sasl安全机制
+      properties:
+        sasl.mechanism:  # PLAIN
+        security.protocol: #  SASL_PLAINTEXT
+        sasl.jaas.config: #  org.apache.kafka.common.security.plain.PlainLoginModule required username="xxxx" password="xxxx";
+      bootstrap-servers: 127.0.0.1:9092
+      topic: topic_test
+    # 消费者
+    consumer:
+      #  表示kafka不持有当前offset时应当采用的策略
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      group-id: test
+      bootstrap-servers: 127.0.0.1:9092
+      topic: topic_test
+      #  配置sasl安全机制
+      properties:
+        sasl.mechanism: # PLAIN
+        security.protocol: #  SASL_PLAINTEXT
+        sasl.jaas.config: #  org.apache.kafka.common.security.plain.PlainLoginModule required username="xxxx" password="xxxx";
+
+# 生产成功消息配置
+listener:
+  visibleLog: true
+  listenerQueueSize: 100000
+  corePoolSize: 1
+  maxPoolSize: 2
+  poolQueueCapacity: 500
+  threadNamePrefix: data-report-kafka-send
+  visiblePool: false
+
+# jasypt加密springboot配置文件中的敏感信息
+jasypt:
+  encryptor:
+    password: EbfYkitulv73I2p0mXI50JMXoaxZTKJ7
