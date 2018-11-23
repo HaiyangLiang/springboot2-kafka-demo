@@ -85,12 +85,11 @@
     <logger name="org.hibernate.validator" level="WARN"/>
     <logger name="org.elasticsearch" level="WARN"/>
     <logger name="org.crsh" level="ERROR"/>
-    <logger name="com.bonc.kafka" level="ERROR"/>
-    <logger name="com.bonc.alarm" level="INFO"/>
+    <logger name="com.liang.kafka-demo" level="ERROR"/>
     <logger name="ch.qos.logback" level="ERROR"/>
     <logger name="net.sf.ehcache" level="WARN"/>
     <logger name="org.apache.kafka" level="ERROR"/>
-    <logger name="com.bonc.business.mapper" level="DEBUG"/>
+    <logger name="com.liang.kafka.mapper" level="DEBUG"/>
 
 
     <!-- 日志输出级别 -->

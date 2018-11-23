@@ -29,7 +29,7 @@ public class KafkaTest {
     }
     @Test
     public void test1() throws ClassNotFoundException, FileNotFoundException {
-        File file = new File("F:\\WorkSpace\\idea\\bonc\\kafka-sender\\src\\main\\resources\\电子一所正式上报数据1.xlsx");
+        File file = new File("F:\\数据1.xlsx");
         InputStream inputStream = new FileInputStream(file);
         // 从excel中获取数据, 封装入ExcelData
         List<ExcelColumnTypeEnum> cellTypes = Arrays.asList(ExcelColumnTypeEnum.STRING, ExcelColumnTypeEnum.STRING,
