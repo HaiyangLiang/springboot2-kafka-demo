@@ -26,7 +26,16 @@ springboot2.x集成kafka生产者消费者
                 return new DefaultKafkaConsumerFactory<>(consumerConfigs());
             }
             
-   ###  1. 通过注解方式
+            /**
+             * 消费消息统一处理
+             */
+            @KafkaListener(topics = "${spring.kafka.consumer.topic}")
+            public void listen(ConsumerRecord<?, ?> record) {
+                log.info("消费kafka的key: " + record.key());
+                log.info("消费kafka的value: " + record.value().toString());
+            }
+            
+   ###  2. 通过配置监听器方式
           /**
              * 工厂配置
              */
