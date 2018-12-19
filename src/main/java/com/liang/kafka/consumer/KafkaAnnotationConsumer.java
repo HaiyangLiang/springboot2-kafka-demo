@@ -16,7 +16,7 @@ public class KafkaAnnotationConsumer {
     /**
      * 消费消息统一处理
      */
-//    @KafkaListener(topics = "${spring.kafka.consumer.topic}")
+//    @KafkaListener(topicPattern = "topic_test.*")
     public void listen(ConsumerRecord<?, ?> record) {
         log.info("消费kafka的key: " + record.key());
         log.info("消费kafka的value: " + record.value().toString());

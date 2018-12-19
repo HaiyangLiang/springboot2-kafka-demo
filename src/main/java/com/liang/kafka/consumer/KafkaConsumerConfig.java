@@ -43,6 +43,10 @@ public class KafkaConsumerConfig {
     private String topics;
     /**
      * 工厂配置
+     *
+     * 关于consumer的主要的封装在ConcurrentKafkaListenerContainerFactory这个里头，
+     * 本身的KafkaConsumer是线程不安全的，无法并发操作，这里spring又在包装了一层，
+     * 根据配置的spring.kafka.listener.concurrency来生成多个并发的KafkaMessageListenerContainer实例
      */
     @Bean
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
@@ -60,6 +64,12 @@ public class KafkaConsumerConfig {
 
     /**
      *  消费者监听器配置
+     *
+     *  每个KafkaMessageListenerContainer都自己创建一个ListenerConsumer，
+     *  然后自己创建一个独立的kafka consumer，每个ListenerConsumer在线程池里头运行，这样来实现并发。
+     *
+     *  每个ListenerConsumer里头都有一个recordsToProcess队列，从原始的kafka consumer poll出来的记录会放到这个队列里头，
+     *  然后有一个ListenerInvoker线程循环超时等待从recordsToProcess取出记录，然后交给应用程序的KafkaListener标注的方法去执行
      */
     @Bean
     public KafkaMessageListenerContainer<String, String> listenerContainer(ConsumerFactory<String, String> cf) {

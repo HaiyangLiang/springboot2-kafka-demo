@@ -32,7 +32,7 @@ public class KafkaProducerListener implements ProducerListener<String, String> {
     public void onSuccess(String topic, Integer partition, String key, String value, RecordMetadata recordMetadata) {
         blockingDeque.add(value);
         if (visibleLog) {
-            LOGGER.info("kafka生产者key:" + key + " kafka消费者value:" + value);
+//            LOGGER.info("kafka生产者key:" + key + " kafka消费者value:" + value);
         }
     }
 

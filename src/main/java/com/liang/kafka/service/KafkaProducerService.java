@@ -29,7 +29,7 @@ public class KafkaProducerService {
         for (List<Object> row : rows) {
             executor.execute(() -> {
                 String msg = row.stream().map(String::valueOf).collect(Collectors.joining(","));
-                kafkaTemplate.sendDefault(msg);
+                kafkaTemplate.sendDefault("hello",msg);
             });
         }
     }
