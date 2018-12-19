@@ -40,7 +40,7 @@ spring:
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       group-id: test
       bootstrap-servers: 127.0.0.1:9092
-      topic: topic_test
+      topics: topic_test
       #  配置sasl安全机制
       properties:
         sasl.mechanism: # PLAIN
@@ -49,10 +49,10 @@ spring:
 
 # 生产成功消息配置
 listener:
-  visibleLog: true
+  visibleLog: false
   listenerQueueSize: 100000
   corePoolSize: 1
-  maxPoolSize: 2
+  maxPoolSize: 50
   poolQueueCapacity: 500
   threadNamePrefix: data-report-kafka-send
   visiblePool: false

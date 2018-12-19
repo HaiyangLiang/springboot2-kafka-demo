@@ -1,6 +1,5 @@
 package com.liang.kafka.consumer;
 
-import com.liang.kafka.consumer.KafkaConsumerListener;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.config.SaslConfigs;
@@ -14,7 +13,8 @@ import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
-import org.springframework.util.CollectionUtils;
+import org.springframework.kafka.listener.ContainerProperties;
+import org.springframework.kafka.listener.KafkaMessageListenerContainer;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -39,7 +39,8 @@ public class KafkaConsumerConfig {
     private String securityProtocol;
     @Value("${spring.kafka.consumer.properties.sasl.jaas.config}")
     private String saslJaasConfig;
-
+    @Value("${spring.kafka.consumer.topics}")
+    private String topics;
     /**
      * 工厂配置
      */
@@ -47,12 +48,28 @@ public class KafkaConsumerConfig {
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
+        factory.setConcurrency(1);
         factory.getContainerProperties().setPollTimeout(1500);
         return factory;
     }
 
-    private ConsumerFactory<String, String> consumerFactory() {
+    @Bean
+    public ConsumerFactory<String, String> consumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs());
+    }
+
+    /**
+     *  消费者监听器配置
+     */
+    @Bean
+    public KafkaMessageListenerContainer<String, String> listenerContainer(ConsumerFactory<String, String> cf) {
+        // 设置topics
+        ContainerProperties containerProperties = new ContainerProperties(topics);
+        // 设置消费者监听器
+        containerProperties.setMessageListener(new KafkaListenerConsumer());
+        KafkaMessageListenerContainer<String, String> container = new KafkaMessageListenerContainer<>(cf, containerProperties);
+        container.setBeanName("messageListenerContainer");
+        return container;
     }
 
     /**
@@ -72,14 +89,6 @@ public class KafkaConsumerConfig {
             propsMap.put(SaslConfigs.SASL_JAAS_CONFIG, saslJaasConfig);
         }
         return propsMap;
-    }
-
-    /**
-     * 消费者监听器
-     */
-    @Bean
-    public KafkaConsumerListener listener() {
-        return new KafkaConsumerListener();
     }
 
 }

@@ -5,6 +5,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
@@ -25,9 +26,11 @@ public class KafkaProducerService {
     public void send(ExcelData excelData) {
         List<List<Object>> rows = excelData.getRows();
         // do something
-        executor.execute(() -> {
-            String msg = rows.stream().map(String::valueOf).collect(Collectors.joining("|"));
-            kafkaTemplate.sendDefault(msg);
-        });
+        for (List<Object> row : rows) {
+            executor.execute(() -> {
+                String msg = row.stream().map(String::valueOf).collect(Collectors.joining(","));
+                kafkaTemplate.sendDefault(msg);
+            });
+        }
     }
 }
